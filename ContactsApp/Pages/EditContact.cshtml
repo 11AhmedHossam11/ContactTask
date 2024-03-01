@@ -1,0 +1,35 @@
+﻿@page "{id:int}"
+@model EditContactModel
+@{
+    ViewData["Title"] = "Edit Contact";
+}
+
+<h2>Edit Contact</h2>
+
+<form method="post">
+    <input asp-for="Contact.Id" type="hidden" class="form-control" />
+
+    <div class="form-group">
+        <label asp-for="Contact.Name"></label>
+        <input asp-for="Contact.Name" class="form-control" />
+        <span asp-validation-for="Contact.Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Contact.Phone"></label>
+        <input asp-for="Contact.Phone" class="form-control" />
+        <span asp-validation-for="Contact.Phone" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Contact.Address"></label>
+        <input asp-for="Contact.Address" class="form-control" />
+        <span asp-validation-for="Contact.Address" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Contact.Notes"></label>
+        <textarea asp-for="Contact.Notes" class="form-control"></textarea>
+        <span asp-validation-for="Contact.Notes" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+

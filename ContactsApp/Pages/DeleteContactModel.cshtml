@@ -1,0 +1,15 @@
+﻿
+@page
+@model DeleteContactModel
+@{
+    ViewData["Title"] = "Delete Contact";
+}
+
+<h2>Delete Contact</h2>
+
+<p>Are you sure you want to delete contact: @Model.Contact.Name?</p>
+
+<form method="post">
+    <input type="submit" value="Delete" class="btn btn-danger" />
+    <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,40 @@
+﻿@page
+@model LoginPageModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2>Login</h2>
+<form method="post">
+    <div class="row">
+        <div class="col-md-6 col-lg-6">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+        </div>
+           
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-lg-6">
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+        </div>
+
+    </div>
+
+ 
+    <br />
+    <div class="row">
+        <div class="col-md-2 col-lg-2">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </div>
+</form>
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <p class="text-danger">@Model.ErrorMessage</p>
+}

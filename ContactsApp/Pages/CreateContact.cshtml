@@ -1,0 +1,27 @@
+﻿@page
+@model ContactsApp.Pages.CreateContactModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create New Contact</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Contact.Name">Name</label>
+        <input asp-for="Contact.Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Contact.Phone">Phone</label>
+        <input asp-for="Contact.Phone" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Contact.Address">Address</label>
+        <input asp-for="Contact.Address" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Contact.Notes">Notes</label>
+        <input asp-for="Contact.Notes" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

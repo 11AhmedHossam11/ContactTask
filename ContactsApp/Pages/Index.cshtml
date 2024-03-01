@@ -1,0 +1,144 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Contacts";
+}
+
+<h2>Contacts</h2>
+<p>
+    <a asp-page="CreateContact">Create New</a>
+</p>
+
+<table class="table" id="contactsTable">
+    <thead>
+        <tr>
+            <th>
+                <input type="text" id="nameFilter" placeholder="Filter by Name" onkeyup="applyFilter()">
+            </th>
+            <th>
+                <input type="text" id="phoneFilter" placeholder="Filter by Phone" onkeyup="applyFilter()">
+            </th>
+            <th>
+                <input type="text" id="addressFilter" placeholder="Filter by Address" onkeyup="applyFilter()">
+            </th>
+            <th>
+                <input type="text" id="notesFilter" placeholder="Filter by Notes" onkeyup="applyFilter()">
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var contact in Model.PagedContacts)
+        {
+            <tr id="@contact.Id">
+                <td> @contact.Name</td>
+                <td> @contact.Phone </td>
+                <td> @contact.Address </td>
+                <td>  @contact.Notes</td>
+                <td>
+                    @if ((contact.IsEditing == true && contact.LockedBy != null && contact.LockedBy == User.Identity?.Name) || (!contact.IsEditing ))
+                    {
+                        <a asp-page="EditContact" asp-route-id="@contact.Id" class="btn btn-primary edit-btn">Edit</a>
+                        <a asp-page="DeleteContactModel" asp-route-id="@contact.Id" class="btn btn-danger delete-btn">Delete</a>
+                        <span class="locked-by"></span>
+
+                    }
+                    else if (contact.IsEditing && contact.LockedBy != null && contact.LockedBy != User.Identity?.Name)
+                    {
+                        <span class="locked-by">Locked By @contact.LockedBy</span>
+                    }
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @if (Model.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="/Index?page=@(Model.PageNumber - 1)">Previous</a>
+                </li>
+            }
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="/Index?page=@i">@i</a>
+                </li>
+            }
+            @if (Model.HasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="/Index?page=@(Model.PageNumber + 1)">Next</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+<script src="~/js/filtercontact.js"></script>
+
+<script src="~/js/signalr.min.js"></script>
+<script>
+    var connection = new signalR.HubConnectionBuilder().withUrl("/contactHub").build();
+
+    connection.start().then(function () {
+        console.log("SignalR Connected");
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    connection.on("ReceiveContacts", function (contact) {
+        debugger;
+        var contactsTable = document.getElementById("contactsTable").getElementsByTagName('tbody')[0];
+        console.log(contact)
+        var newRow = document.createElement('tr');
+        newRow.id = contact.id;
+
+        newRow.innerHTML = `
+            <td>${contact.name}</td>
+            <td>${contact.phone}</td>
+            <td>${contact.address}</td>
+            <td>${contact.notes}</td>
+            <td>
+                <a asp-page="EditContact" asp-route-id="${contact.id}" class="btn btn-primary edit-btn">Edit</a>
+                <a asp-page="DeleteContactModel" asp-route-id="${contact.id}" class="btn btn-danger delete-btn">Delete</a>
+                <span class="locked-by"></span>
+            </td>
+        `;
+
+        contactsTable.appendChild(newRow);
+
+    });
+
+    connection.on("ReceiveLockedContact", function (contact) {
+        debugger;
+        var lockedRow = document.getElementById(contact.id);
+        var lockedByElement = lockedRow.querySelector(".locked-by");
+        var editButton = lockedRow.querySelector(".edit-btn");
+        var deleteButton = lockedRow.querySelector(".delete-btn");
+
+        lockedByElement.innerText = "Locked By " + contact.lockedBy;
+        editButton.style.display = "none";
+        deleteButton.style.display = "none"; 
+        lockedByElement.style.display = "inline"; 
+    });
+
+    connection.on("ReceiveUnLockedContact", function (contact) {
+        debugger;
+        var lockedRow = document.getElementById(contact.id);
+        var lockedByElement = lockedRow.querySelector(".locked-by");
+        var editButton = lockedRow.querySelector(".edit-btn");
+        var deleteButton = lockedRow.querySelector(".delete-btn");
+
+        lockedByElement.style.display = "none"; 
+        editButton.style.display = "inline"; 
+        deleteButton.style.display = "inline"; 
+    });
+
+    
+</script>
+
